@@ -7,6 +7,7 @@ import cookielib
 import string
 import random
 import re
+from bs4 import BeautifulSoup
 
 hosturl = 'http://www.maiziedu.com'
 posturl = 'http://www.maiziedu.com/user/login/'
@@ -53,4 +54,7 @@ for item in course_lst:
         lst += tmp
 print len(lst)
 print lst
+
+soup = BeautifulSoup(content, 'html.parser')
+soup.source.get('src')
 
