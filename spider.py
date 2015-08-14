@@ -31,8 +31,8 @@ headers = {
 
 postData = {
     'csrfmiddlewaretoken': csrftoken,
-    'account_l': 'yzg963@163.com',
-    'password_l': 'yzg134530',
+    'account_l': '',
+    'password_l': '',
 }
 
 postData = urllib.urlencode(postData)
