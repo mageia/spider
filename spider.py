@@ -7,9 +7,10 @@ import cookielib
 import string
 import random
 import re
+import os
 from bs4 import BeautifulSoup
-import sys 
-reload(sys) 
+import sys
+reload(sys)
 sys.setdefaultencoding("utf-8")
 
 hosturl = 'http://www.maiziedu.com'
@@ -67,18 +68,28 @@ def getlessons(url):
         #title += re.findall(r'(?<=title=")[^"]+', item)
     return href
     
-def getsections(url):
+def getsections(url, basepath):
     content = opener().open(url).read()
     soup = BeautifulSoup(content, 'html.parser')
     playlist = soup.find(name='div', attrs={'id': 'playlist'}).ul.findAll('li')
+    section_name = soup.find(name='dl', attrs={'class': 'course-lead'}).dd.text
+    fpath = os.path.join(basepath, section_name)
+    print fpath
+    if not os.path.isdir(fpath):
+        os.mkdir(fpath)
     for item in playlist:
-        print item.a['href'], item.a.text
-        print BeautifulSoup(opener().open(hosturl + item.a['href'])).find(name='video', attrs={'id': 'microohvideo'}).source['src']
+        video_addr = BeautifulSoup(opener().open(hosturl + item.a['href'])).find(name='video', attrs={'id': 'microohvideo'}).source['src']
+        fname = item.a.text + '.' + video_addr.split('.')[-1]
+        cmd = 'curl -L %s -o %s/%s' %(video_addr, fpath, fname)
+        os.system(cmd)
 
 
 if __name__ == '__main__':
-    login('', '')
+    username = raw_input('username: ')
+    password = raw_input('password: ')
+    login(username, password)
     #course_lst = getallcourse()
     course_url = hosturl + '/course/python/'
     lessons = getlessons(course_url)
-    getsections(hosturl+lessons[0])
+    basepath = raw_input(u'保存位置: ')
+    getsections(hosturl+lessons[0], basepath)
