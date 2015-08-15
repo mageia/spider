@@ -96,7 +96,6 @@ if __name__ == '__main__':
 
     threads = []
     for lesson_path in lessons:
-        print lesson_path
         t = threading.Thread(target=getsections, args=(hosturl+lesson_path, basepath))
         threads.append(t)
 
