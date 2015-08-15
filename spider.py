@@ -6,6 +6,7 @@ import urllib2
 import cookielib
 import string
 import random
+import threading
 import re
 import os
 from bs4 import BeautifulSoup
@@ -72,7 +73,7 @@ def getsections(url, basepath):
     content = opener().open(url).read()
     soup = BeautifulSoup(content, 'html.parser')
     playlist = soup.find(name='div', attrs={'id': 'playlist'}).ul.findAll('li')
-    section_name = soup.find(name='dl', attrs={'class': 'course-lead'}).dd.text
+    section_name = soup.find(name='dl', attrs={'class': 'course-lead'}).dt.text
     fpath = os.path.join(basepath, section_name)
     print fpath
     if not os.path.isdir(fpath):
@@ -92,4 +93,17 @@ if __name__ == '__main__':
     course_url = hosturl + '/course/python/'
     lessons = getlessons(course_url)
     basepath = raw_input(u'保存位置: ')
-    getsections(hosturl+lessons[0], basepath)
+
+    threads = []
+    for lesson_path in lessons:
+        print lesson_path
+        t = threading.Thread(target=getsections, args=(hosturl+lesson_path, basepath))
+        threads.append(t)
+
+    for t in threads:
+        t.setDaemon(True)
+        t.start()
+    for t in threads:
+        threading.Thread.join(t)
+
+    print 'All Download Thread Done'
