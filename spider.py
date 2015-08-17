@@ -81,7 +81,7 @@ def getsections(url, basepath):
     for item in playlist:
         video_addr = BeautifulSoup(opener().open(hosturl + item.a['href'])).find(name='video', attrs={'id': 'microohvideo'}).source['src']
         fname = item.a.text + '.' + video_addr.split('.')[-1]
-        cmd = 'curl -L %s -o %s/%s' %(video_addr, fpath, fname)
+        cmd = "curl -L %s -o '%s/%s'" %(video_addr, fpath, fname)
         os.system(cmd)
 
 
